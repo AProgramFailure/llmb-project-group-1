@@ -226,4 +226,4 @@ def perturb_text_char_column(
     if pdf not in CHAR_TEXT_PDF_REGISTRY:
         raise ValueError(f"PDF '{pdf}' not supported. Choose from: {list(CHAR_TEXT_PDF_REGISTRY.keys())}")
     fn = CHAR_TEXT_PDF_REGISTRY[pdf]
-    return df[column].apply(lambda v: fn(v, alpha=alpha, confidence=confidence))
+    return df[column].apply(lambda v: v if pd.isna(v) else fn(v, alpha=alpha, confidence=confidence))

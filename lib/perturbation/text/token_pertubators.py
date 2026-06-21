@@ -232,4 +232,4 @@ def perturb_text_token_column(
         raise ValueError(f"PDF '{pdf}' not supported. Choose from: {list(TOKEN_TEXT_PDF_REGISTRY.keys())}")
     vocab = _build_vocab(df[column])
     fn = TOKEN_TEXT_PDF_REGISTRY[pdf]
-    return df[column].apply(lambda v: fn(v, vocab=vocab, alpha=alpha, confidence=confidence))
+    return df[column].apply(lambda v: v if pd.isna(v) else fn(v, vocab=vocab, alpha=alpha, confidence=confidence))

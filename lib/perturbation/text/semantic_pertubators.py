@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from lib.llm.llm_client import client, MODEL
+from lib.llm.llm_client import get_client, MODEL_1 as MODEL
 
 
 def _get_paraphrase_instruction(alpha: float, confidence: float) -> str:
@@ -17,7 +17,7 @@ def _semantic_perturb(value: str, *, alpha: float, confidence: float) -> str:
     if np.random.random() < confidence:
         return value
     instruction = _get_paraphrase_instruction(alpha, confidence)
-    response = client.chat.completions.create(
+    response = get_client().chat.completions.create(
         model=MODEL,
         messages=[
             {"role": "system", "content": instruction},

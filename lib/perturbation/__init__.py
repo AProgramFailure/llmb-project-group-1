@@ -7,6 +7,9 @@ from .complex import *
 from .text.character_pertubators import *
 from .text.token_pertubators import *
 from .text.semantic_pertubators import *
+from .text.sentence_pertubators import *
+from .text.entity_pertubators import *
+from .domain import *
 
 __all__ = [
     # numerical
@@ -161,4 +164,7 @@ __all__ = [
     # text - semantic
     "SEMANTIC_TEXT_PDF_REGISTRY",
     "perturb_text_semantic_column",
+    # text - entity (generic, spaCy NER)
+    "build_entity_pools",
+    "perturb_text_entity_column",
 ]

@@ -17,3 +17,5 @@ wheels/
 
 # Local Jupyter/IPython config
 .ipython/
+
+.DS_Store
