@@ -4,23 +4,22 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MODEL_1 = os.getenv("LLM_MODEL_1")
-MODEL_2 = os.getenv("LLM_MODEL_2")
-MODEL_3 = os.getenv("LLM_MODEL_3")
+MODEL_1 = os.getenv("LLM_MODEL_1")  # Qwen2-72B
+MODEL_2 = os.getenv("LLM_MODEL_2")  # MiniMax
+MODEL_3 = os.getenv("LLM_MODEL_3")  # OpenAI (to be configured)
 
 # Default model
-MODEL = MODEL_2
+MODEL = MODEL_1
 
-# Pricing for MODEL_2 only (per 1M tokens) — MODEL_1 pricing unknown, ask teacher
-COST_INPUT_PER_M  = 0.15
-COST_OUTPUT_PER_M = 1.15
-
-
-def compute_cost(response) -> float:
-    """Return cost in USD for a single API response based on token usage."""
-    input_tokens  = response.usage.prompt_tokens
-    output_tokens = response.usage.completion_tokens
-    return (input_tokens * COST_INPUT_PER_M + output_tokens * COST_OUTPUT_PER_M) / 1_000_000
+# Pricing per 1M tokens, keyed by model number.
+# MODEL_1 (Qwen): unknown — ask teacher
+# MODEL_2 (MiniMax): $0.15 input / $1.15 output
+# MODEL_3 (OpenAI): to be configured
+COSTS = {
+    1: {"input": None,  "output": None},
+    2: {"input": 0.15,  "output": 1.15},
+    3: {"input": None,  "output": None},
+}
 
 _clients = {}
 
@@ -36,13 +35,26 @@ def get_client(n: int = 1):
     return _clients[n]
 
 
+def compute_cost(response, n: int) -> float | None:
+    """
+    Return cost in USD for a single API response based on token usage.
+    Returns None if pricing for model n is not yet configured.
+    """
+    pricing = COSTS.get(n, {})
+    if pricing.get("input") is None or pricing.get("output") is None:
+        return None
+    input_tokens  = response.usage.prompt_tokens
+    output_tokens = response.usage.completion_tokens
+    return (input_tokens * pricing["input"] + output_tokens * pricing["output"]) / 1_000_000
+
+
 def timed_completion(messages: list[dict], model: str = None, n: int = 1, **kwargs) -> tuple:
     """
     Call chat.completions.create and return (response, latency_ms).
     Use this instead of get_client().chat.completions.create() so latency is captured automatically.
 
     Example:
-        response, latency_ms = timed_completion(messages, model=MODEL_1)
+        response, latency_ms = timed_completion(messages, model=MODEL_1, n=1)
     """
     client = get_client(n)
     model  = model or globals().get(f"MODEL_{n}") or MODEL
