@@ -11,6 +11,17 @@ MODEL_3 = os.getenv("LLM_MODEL_3")
 # Default model
 MODEL = MODEL_2
 
+# Pricing for MODEL_2 only (per 1M tokens) — MODEL_1 pricing unknown, ask teacher
+COST_INPUT_PER_M  = 0.15
+COST_OUTPUT_PER_M = 1.15
+
+
+def compute_cost(response) -> float:
+    """Return cost in USD for a single API response based on token usage."""
+    input_tokens  = response.usage.prompt_tokens
+    output_tokens = response.usage.completion_tokens
+    return (input_tokens * COST_INPUT_PER_M + output_tokens * COST_OUTPUT_PER_M) / 1_000_000
+
 _clients = {}
 
 
