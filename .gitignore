@@ -19,3 +19,6 @@ wheels/
 .ipython/
 
 .DS_Store
+
+# Run logs (keep folder, ignore log files)
+logs/*.jsonl

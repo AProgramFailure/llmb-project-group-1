@@ -1,4 +1,5 @@
 import os
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -22,3 +23,19 @@ def get_client(n: int = 1):
             base_url=os.getenv(f"LLM_BASE_URL_{n}"),
         )
     return _clients[n]
+
+
+def timed_completion(messages: list[dict], model: str = None, n: int = 1, **kwargs) -> tuple:
+    """
+    Call chat.completions.create and return (response, latency_ms).
+    Use this instead of get_client().chat.completions.create() so latency is captured automatically.
+
+    Example:
+        response, latency_ms = timed_completion(messages, model=MODEL_1)
+    """
+    client = get_client(n)
+    model  = model or globals().get(f"MODEL_{n}") or MODEL
+    t0 = time.perf_counter()
+    response = client.chat.completions.create(model=model, messages=messages, **kwargs)
+    latency_ms = (time.perf_counter() - t0) * 1000
+    return response, latency_ms
