@@ -17,7 +17,7 @@ Create a `.env` file at the root of the project with the following structure:
 IPKERNELAPP_LOG_LEVEL=ERROR
 IPYTHONDIR=.ipython
 
-# Model 1 — Qwen
+# Model 1 — Qwen  (pricing: $0.15 input / $0.95 output per 1M tokens)
 LLM_MODEL_1=UTM2
 LLM_API_KEY_1=your_qwen_api_key
 LLM_BASE_URL_1=http://grading-llm.eemcs.utwente.nl:8801/v1/

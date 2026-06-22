@@ -16,9 +16,9 @@ MODEL = MODEL_1
 # MODEL_2 (MiniMax): $0.15 input / $1.15 output
 # MODEL_3 (OpenAI): to be configured
 COSTS = {
-    1: {"input": None,  "output": None},
-    2: {"input": 0.15,  "output": 1.15},
-    3: {"input": None,  "output": None},
+    1: {"input": 0.15,  "output": 0.95},   # Qwen2-72B (UTM2)
+    2: {"input": 0.15,  "output": 1.15},   # MiniMax (UTM)
+    3: {"input": None,  "output": None},   # OpenAI (to be configured)
 }
 
 _clients = {}
