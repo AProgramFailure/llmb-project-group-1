@@ -1,4 +1,5 @@
 import os
+import re
 import time
 from dotenv import load_dotenv
 
@@ -8,11 +9,12 @@ MODEL_1 = os.getenv("LLM_MODEL_1")  # Qwen2-72B
 MODEL_2 = os.getenv("LLM_MODEL_2")  # MiniMax
 MODEL_3 = os.getenv("LLM_MODEL_3")  # OpenAI (to be configured)
 
-# Default model
-MODEL = MODEL_1
+# Default model — only change MODEL here, MODEL_N is derived automatically
+MODEL = MODEL_2
+MODEL_N = {MODEL_1: 1, MODEL_2: 2, MODEL_3: 3}.get(MODEL, 1)
 
 # Pricing per 1M tokens, keyed by model number.
-# MODEL_1 (Qwen): unknown — ask teacher
+# MODEL_1 (Qwen):   $0.15 input / $0.95 output
 # MODEL_2 (MiniMax): $0.15 input / $1.15 output
 # MODEL_3 (OpenAI): to be configured
 COSTS = {
@@ -20,6 +22,11 @@ COSTS = {
     2: {"input": 0.15,  "output": 1.15},   # MiniMax (UTM)
     3: {"input": None,  "output": None},   # OpenAI (to be configured)
 }
+
+def strip_thinking(text: str) -> str:
+    """Remove <think>...</think> blocks that some models include in their output."""
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
 
 _clients = {}
 
