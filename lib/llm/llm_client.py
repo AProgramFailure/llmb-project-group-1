@@ -10,7 +10,7 @@ MODEL_2 = os.getenv("LLM_MODEL_2")  # MiniMax
 MODEL_3 = os.getenv("LLM_MODEL_3")  # OpenAI (to be configured)
 
 # Default model — only change MODEL here, MODEL_N is derived automatically
-MODEL = MODEL_2
+MODEL = MODEL_1
 MODEL_N = {MODEL_1: 1, MODEL_2: 2, MODEL_3: 3}.get(MODEL, 1)
 
 # Pricing per 1M tokens, keyed by model number.
