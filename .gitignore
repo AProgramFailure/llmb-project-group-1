@@ -22,3 +22,5 @@ wheels/
 
 # Run logs (keep folder, ignore log files)
 logs/*.jsonl
+documents/**/*.pdf
+documents_*.zip
