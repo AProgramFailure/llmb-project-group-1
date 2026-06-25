@@ -28,6 +28,17 @@ def strip_thinking(text: str) -> str:
     return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
 
 
+# Per-model extra_body to disable thinking at the API level.
+# MODEL_1 (Qwen via vLLM): chat_template_kwargs works.
+# MODEL_2 (MiniMax/UTM):   server has thinking hardcoded — no parameter disables it.
+#                           strip_thinking() handles removal on the output side.
+# MODEL_3 (OpenAI):        no thinking mode to disable.
+_THINKING_OFF_EXTRA_BODY = {
+    1: {"chat_template_kwargs": {"enable_thinking": False}},
+    2: None,
+    3: None,
+}
+
 _clients = {}
 
 
@@ -58,13 +69,18 @@ def compute_cost(response, n: int) -> float | None:
 def timed_completion(messages: list[dict], model: str = None, n: int = 1, **kwargs) -> tuple:
     """
     Call chat.completions.create and return (response, latency_ms).
-    Use this instead of get_client().chat.completions.create() so latency is captured automatically.
+    Thinking is disabled automatically per model. Pass extra_body explicitly to override.
 
     Example:
         response, latency_ms = timed_completion(messages, model=MODEL_1, n=1)
     """
     client = get_client(n)
     model  = model or globals().get(f"MODEL_{n}") or MODEL
+
+    extra_body = _THINKING_OFF_EXTRA_BODY.get(n)
+    if extra_body is not None:
+        kwargs.setdefault("extra_body", extra_body)
+
     t0 = time.perf_counter()
     response = client.chat.completions.create(model=model, messages=messages, **kwargs)
     latency_ms = (time.perf_counter() - t0) * 1000
