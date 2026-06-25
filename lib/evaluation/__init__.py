@@ -20,3 +20,8 @@ from .clear import (
     reliability_from_drift,
     DEFAULT_WEIGHTS,
 )
+from .footprint import (
+    compute_footprint_score,
+    footprint_report,
+    footprint_summary,
+)
